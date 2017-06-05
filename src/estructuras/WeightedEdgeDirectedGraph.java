@@ -1,11 +1,11 @@
 package estructuras;
 
 import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import api.IWeightedDirectedGraph;
 
-public class WeightedEdgeDirectedGraph<K,V> implements IWeightedDirectedGraph<K,V> {
+public class WeightedEdgeDirectedGraph<K,V> {
 	
 	
 	private EncadenamientoSeparadoTH<K,V> vertices;
@@ -65,27 +65,18 @@ public class WeightedEdgeDirectedGraph<K,V> implements IWeightedDirectedGraph<K,
 		Iterable<Edge<K>> edges=insertado;
 		for(Edge<K> e:edges)
 		{
-			if(e.origin().equals(idOrigen)&&e.end().equals(idDestino)) 
+			if(e.getOrigin().equals(idOrigen)&&e.getEnd().equals(idDestino)) 
 			{
-				if(e instanceof SpecialEdge)
-				{
-					if(!((SpecialEdge<K>)e).sePuede()) return -1;
-				}
-				return e.weight();
+				return e.getWeight();
 			}
 		}
 		throw new NoSuchElementException();
 	}
 
 	
-	public void agregarArco(K idOrigen, K idDestino, double peso) {
-		agregarArco(idOrigen,idDestino,peso,'z');
-	}
-
-	
-	public void agregarArco(K idOrigen, K idDestino, double peso, char ordenLexicografico) {
+	public void agregarArco(K idOrigen, K idDestino, double[] peso) {
 		ListaDobleEncadenada<Edge<K>> lista=adj.darValor(idOrigen);
-		Edge<K> edge=new Edge<K>(idOrigen,idDestino,peso,ordenLexicografico);
+		Edge<K> edge=new Edge<K>(idOrigen,idDestino,peso);
 		if(lista.isEmpty()) 
 		{
 			lista.agregarElementoFinal(edge);
@@ -94,7 +85,7 @@ public class WeightedEdgeDirectedGraph<K,V> implements IWeightedDirectedGraph<K,
 		}
 		for(Edge<K> e:lista )
 		{
-			if(idDestino.equals(e.end()))
+			if(idDestino.equals(e.getEnd()))
 			{
 				e.setWeight(peso);
 				return;
@@ -102,150 +93,11 @@ public class WeightedEdgeDirectedGraph<K,V> implements IWeightedDirectedGraph<K,
 			
 		}
 		lista=adj.darValor(idOrigen);
-		if(ordenLexicografico<lista.darElemento(0).caracter()) 
-		{
-			lista.agregarElementoPrincipio(edge);
-			numEdges++;
-			return;
-		}
-		else if (ordenLexicografico>=lista.getLast().giveItem().caracter())
-		{
-			lista.agregarElementoFinal(edge);
-			numEdges++;
-			return;
-		}
-		int i=0;
-		Edge<K> temp=null;
-		for(Edge<K> e:lista )
-		{
-			if(temp!=null)
-			{
-				if (ordenLexicografico>temp.caracter() && ordenLexicografico<e.caracter())
-				{
-					lista.agregarElemento(i,edge);
-					numEdges++;
-					return;
-				}
-				else if (ordenLexicografico==temp.caracter()&&ordenLexicografico<e.caracter())
-				{
-					lista.agregarElemento(i,edge);
-					numEdges++;
-					return;
-				}
-			}
-			temp=e;
-			i++;
-		}
+		lista.agregarElementoFinal(edge);
+		numEdges++;
 		
 	}
 
-	public void agregarArcoEspecial(K idOrigen, K idDestino, char ordenLexicografico, long pesoManana, long pesoTarde, long pesoNoche, long horaInicio, long horaFin)
-	{
-		ListaDobleEncadenada<Edge<K>> lista=adj.darValor(idOrigen);
-		SpecialEdge<K> edge= new SpecialEdge<K>(idOrigen,idDestino,horaInicio,horaFin,pesoManana,pesoTarde,pesoNoche,ordenLexicografico);
-		if(lista.isEmpty()) 
-		{
-			lista.agregarElementoFinal(edge);
-			numEdges++;
-			return;
-		}
-		for(Edge<K> e:lista )
-		{
-			if(idDestino.equals(e.end()))
-			{
-				return;
-			}
-		}
-		lista=adj.darValor(idOrigen);
-		if(ordenLexicografico<lista.darElemento(0).caracter()) 
-		{
-			lista.agregarElementoPrincipio(edge);
-			numEdges++;
-			return;
-		}
-		else if (ordenLexicografico>=lista.getLast().giveItem().caracter())
-		{
-			lista.agregarElementoFinal(edge);
-			numEdges++;
-			return;
-		}
-		int i=0;
-		Edge<K> temp=null;
-		for(Edge<K> e:lista )
-		{
-			if(temp!=null)
-			{
-				if (ordenLexicografico>temp.caracter() && ordenLexicografico<e.caracter())
-				{
-					lista.agregarElemento(i,edge);
-					numEdges++;
-					return;
-				}
-				else if (ordenLexicografico==temp.caracter()&&ordenLexicografico<e.caracter())
-				{
-					lista.agregarElemento(i,edge);
-					numEdges++;
-					return;
-				}
-			}
-			temp=e;
-			i++;
-		}
-	}
-	
-	public void agregarArcoEspecial(K idOrigen, K idDestino, char ordenLexicografico, long horaInicio, long horaFin)
-	{
-		ListaDobleEncadenada<Edge<K>> lista=adj.darValor(idOrigen);
-		SpecialEdge<K> edge= new SpecialEdge<K>(idOrigen,idDestino,horaInicio,horaFin,ordenLexicografico);
-		if(lista.isEmpty()) 
-		{
-			lista.agregarElementoFinal(edge);
-			numEdges++;
-			return;
-		}
-		for(Edge<K> e:lista )
-		{
-			if(idDestino.equals(e.end()))
-			{
-				return;
-			}
-		}
-		lista=adj.darValor(idOrigen);
-		if(ordenLexicografico<lista.darElemento(0).caracter()) 
-		{
-			lista.agregarElementoPrincipio(edge);
-			numEdges++;
-			return;
-		}
-		else if (ordenLexicografico>=lista.getLast().giveItem().caracter())
-		{
-			lista.agregarElementoFinal(edge);
-			numEdges++;
-			return;
-		}
-		int i=0;
-		Edge<K> temp=null;
-		for(Edge<K> e:lista )
-		{
-			if(temp!=null)
-			{
-				if (ordenLexicografico>temp.caracter() && ordenLexicografico<e.caracter())
-				{
-					lista.agregarElemento(i,edge);
-					numEdges++;
-					return;
-				}
-				else if (ordenLexicografico==temp.caracter()&&ordenLexicografico<e.caracter())
-				{
-					lista.agregarElemento(i,edge);
-					numEdges++;
-					return;
-				}
-			}
-			temp=e;
-			i++;
-		}
-	}
 	
 	public Iterator<K> darVertices() {
 		try
@@ -284,7 +136,7 @@ public class WeightedEdgeDirectedGraph<K,V> implements IWeightedDirectedGraph<K,
 		ListaDobleEncadenada<K> lista=new ListaDobleEncadenada<K>();
 		for(Edge<K> e:insertado)
 		{
-			lista.agregarElementoFinal(e.end());
+			lista.agregarElementoFinal(e.getEnd());
 		}
 		return lista.iterator();
 	}
@@ -508,195 +360,6 @@ public class WeightedEdgeDirectedGraph<K,V> implements IWeightedDirectedGraph<K,
 		if(aux.size()==0) aux=null;
 		return aux;
 	}
-	
-	public Iterable<String> dfsLimite(int l,K source)
-	{
-		limite=l;
-		caminos= new EncadenamientoSeparadoTH<String,ArrayList<NodoCamino<K>>>(97);
-		camino= new ArrayList<NodoCamino<K>>();
-		marcados=new EncadenamientoSeparadoTH<K,Boolean>(97);
-		for(int i=0;i<l;i++)
-		{
-			camino.add(new NodoCamino<K>(null,null,0,0));
-		}
-		dfsLim(source);
-		return caminos.llaves();
-	}
-	
-	
-	
-	private void dfsLim(K source) {
-		Iterable<Edge<K>> vertices=adj(source);
-		NodoCamino<K> temp = null;
-		ArrayList<NodoCamino<K>> aux;
-		String msj=null;
-		marcados.insertar(source, true);
-		if(vertices==null) 
-		{
-			msj="";
-			aux=new ArrayList<NodoCamino<K>>();
-			for(int i=0;i<camino.size();i++)
-			{
-				if(temp!=null)
-				{
-					if(!temp.fin().equals(camino.get(i).intermedio())) break;
-				}
-				msj+=camino.get(i).intermedio()+"-";
-				msj+=camino.get(i).fin()+".";
-				aux.add(camino.get(i));
-				temp=camino.get(i);
-			}
-			marcados.insertar(source, false);
-			caminos.insertar(msj, aux);
-			camino.set(camino.size()-limite,new NodoCamino<K>(null,null,0,0));
-			limite++;
-
-			return;
-		}
-		else
-		{
-			NodoCamino<K> nodo=null;
-			for(Edge<K> e:vertices)
-			{
-				limite--;
-				nodo= new NodoCamino<K>(e.end(),e.origin(),e.weight(),1);
-				boolean marcado=false;
-				System.out.println("HOLA "+e.origin()+" "+e.end());
-				if(marcados.darValor(e.end())!=null && marcados.darValor(e.end())) marcado=true;
-				if(marcado) marcados.insertar(e.origin(), false);
-				for(int i=0;i<camino.size() && !marcado;i++)
-				{
-					temp=camino.get(i);
-					if(temp.intermedio()==null&&temp.fin()==null)
-					{
-						camino.set(i,nodo);
-						break;
-					}
-					else if (temp.fin().equals(nodo.fin())&&temp.intermedio().equals(nodo.intermedio()))
-					{
-						break;
-					}
-					else
-					{
-						if(temp.fin().equals(nodo.intermedio())&&!(temp.fin().equals(temp.intermedio())))
-						{
-							nodo.increaseLength(temp.length());
-							nodo.increaseWeight(temp.weight());
-						}
-					}
-					
-				}
-				if(limite>0 && !marcado)
-				{
-					dfsLim(e.end());
-					limite++;
-				}
-				else
-				{
-					msj="";
-					aux=new ArrayList<NodoCamino<K>>();
-					temp=null;
-					for(int i=0;i<camino.size();i++)
-					{
-						if(camino.get(i).intermedio()==null && camino.get(i).fin()==null) break;
-						System.out.println(camino.get(i).intermedio()+" "+camino.get(i).fin()+" "+i);
-						if(temp!=null)
-						{
-							if(!temp.fin().equals(camino.get(i).intermedio())) break;
-						}
-						System.out.println("SIGUE");
-						msj+=camino.get(i).intermedio()+"-";
-						msj+=camino.get(i).fin()+".";
-						System.out.println("XXX"+msj);
-						aux.add(camino.get(i));
-						temp=camino.get(i);	
-					}
-					if(aux.size()!=0)
-					caminos.insertar(msj,aux);
-					camino.set(camino.size()-1-limite,new NodoCamino<K>(null,null,0,0));
-					limite++;
-				}
-			}
-			aux=new ArrayList<NodoCamino<K>>();
-			msj="";
-			for(int i=0;i<camino.size();i++)
-			{
-				if(camino.get(i).intermedio()!=null && camino.get(i).fin()!=null)
-				{
-					msj+=camino.get(i).intermedio()+"-";
-					msj+=camino.get(i).fin()+".";
-					aux.add(camino.get(i));
-
-				}
-				else break;
-			}
-			if(aux.size()!=0)
-			caminos.insertar(msj,aux);
-			marcados.insertar(source, false);
-			if(limite!=camino.size())
-			camino.set(camino.size()-1-limite,new NodoCamino<K>(null,null,0,0));
-		}
-		
-		
-	}
-	public static void main(String[] args) {
-		WeightedEdgeDirectedGraph<Integer,Integer> wdg= new WeightedEdgeDirectedGraph<Integer,Integer>();
-		for (int i = 1; i < 10; i++) {
-			wdg.agregarVertice(i, i);	
-		}
-		wdg.agregarArco(1, 5, 4.0, 'a');
-		wdg.agregarArco(2, 4, 1.0, 'b');
-		wdg.agregarArco(2, 9, 4.0, 'a');
-		wdg.agregarArco(3, 1, 2.0, 'a');
-		wdg.agregarArco(3, 5, 4.0, 'b');
-		wdg.agregarArco(4, 8, 3.0, 'a');
-		wdg.agregarArco(5, 7, 5.0, 'a');
-		wdg.agregarArco(5, 6, 5.0, 'd');
-		wdg.agregarArco(5, 2, 8.0, 'b');
-		wdg.agregarArco(5, 4, 8.0, 'c');
-		wdg.agregarArco(6, 3, 6.0, 'c');
-		wdg.agregarArco(6, 4, 4.0, 'a');
-		wdg.agregarArco(6, 8, 6.0, 'b');
-		wdg.agregarArco(7, 1,10.0, 'c');
-		wdg.agregarArco(7, 2, 1.0, 'b');
-		wdg.agregarArco(7, 9, 6.0, 'a');
-		wdg.agregarArco(8, 3, 4.0, 'a');
-		wdg.agregarArco(9, 1, 4.0, 'a');
-		
-
-
-	
-		Iterable<String> nodos=wdg.dfsLimite(90, 3);
-		int i=0;
-			for(String n:nodos)
-			{
-				System.out.println("CAM "+i+" "+n);
-				ArrayList<NodoCamino<Integer>> cam=wdg.caminos.darValor(n);
-				for(int j=0;j<cam.size();j++)
-				{
-					System.out.println(cam.get(j).intermedio()+" "+cam.get(j).fin());
-				}
-				i++;
-			}
-
-
-	}
-	public boolean noMarcado() {
-		boolean m = true;
-		Iterable<K> llaves=marcados.llaves();
-		if(llaves==null) return m;
-		else
-		{
-			for (K i : llaves) {
-				if (marcados.darValor(i)) {
-					m=false;
-					break;
-				}
-			}
-		}
-		return m;
-	}
-	
 	
 	
 

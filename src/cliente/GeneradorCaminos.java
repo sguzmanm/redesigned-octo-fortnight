@@ -1,5 +1,6 @@
 package cliente;
 
+import algoritmos.Dijkstra;
 import estructuras.WeightedEdgeDirectedGraph;
 
 public class GeneradorCaminos {
@@ -9,6 +10,12 @@ public class GeneradorCaminos {
 	public GeneradorCaminos(String ruta)
 	{
 		
+	}
+	
+	public Iterable<String> ruta(String origen, String fin)
+	{
+		Dijkstra<String,Nodo> D= new Dijkstra<String,Nodo>(graph,origen);
+		return D.pathTo(fin);
 	}
 
 }

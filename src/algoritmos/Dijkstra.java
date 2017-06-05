@@ -1,6 +1,5 @@
 package algoritmos;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -15,13 +14,11 @@ import estructuras.WeightedEdgeDirectedGraph;
 public class Dijkstra<K,V> {
 	
 	private K source;
-	private SimpleDateFormat formatoFechas;
 		private ArrayList<NodoCamino<K>> camino;
 	     private EncadenamientoSeparadoTH<K,Double> distTo;
 	     private IndexMinHeap<K,Double> pq;
 	     public Dijkstra(WeightedEdgeDirectedGraph<K,V> G, K s)
 	     {
-	 		formatoFechas=new SimpleDateFormat("kk:mm");
 	    	 source=s;
 	    	 camino=new ArrayList<NodoCamino<K>>();
 	    	 pq=new IndexMinHeap<K,Double>();
@@ -49,16 +46,16 @@ public class Dijkstra<K,V> {
 	     private void relax(WeightedEdgeDirectedGraph<K,V> G, K v)
 	     {
       	   boolean agregado=false;
-      	   double weight=0;
+      	   double getWeight=0;
 	        for(Edge<K> e : G.adj(v))
 	        {
-	           K w = e.end();
-	           if (distTo.darValor(w) > distTo.darValor(v) + e.weight())
+	           K w = e.getEnd();
+	           if (distTo.darValor(w) > distTo.darValor(v) + e.getWeight())
 	           {
 	        	   agregado=false;
-	        	   weight=e.weight();
-        		  distTo.insertar(w, distTo.darValor(v) + weight);
- 	              NodoCamino<K> nodo= new NodoCamino<K>(w,v,weight,1);
+	        	   getWeight=e.getWeight();
+        		  distTo.insertar(w, distTo.darValor(v) + getWeight);
+ 	              NodoCamino<K> nodo= new NodoCamino<K>(w,v,getWeight,1);
  	              NodoCamino<K> temp=null;
  	              for(int i=0;i<camino.size();i++)
  	              {
@@ -114,22 +111,22 @@ public class Dijkstra<K,V> {
 	}
 	public boolean hasPathTo(K v)
 	{
-		Iterable<NodoCamino<K>> iter=pathTo(v);
+		Iterable<K> iter=pathTo(v);
 		int contador=0;
 		if(iter==null) return false;
-		for(NodoCamino<K> nodo:iter)
+		for(K nodo:iter)
 		{
 			contador++;
 		}
 		return contador!=0;
 	}
-	public Iterable<NodoCamino<K>> pathTo(K v)
+	public Iterable<K> pathTo(K v)
 	{
 		int i=0;
 		K temp=v;
 		NodoCamino<K> nodo=null;
 		boolean llegaOrigen=false;
-		ListaDobleEncadenada<NodoCamino<K>> lista=new ListaDobleEncadenada<NodoCamino<K>>();
+		ListaDobleEncadenada<K> lista=new ListaDobleEncadenada<K>();
 		while(!llegaOrigen)
 		{
 			for(i=0;i<camino.size();i++)
@@ -138,6 +135,7 @@ public class Dijkstra<K,V> {
 				if(temp.equals(source))
 				{
 					llegaOrigen=true;
+					lista.agregarElementoPrincipio(temp);
 					break;
 				}
 				if(nodo.fin()==null && nodo.intermedio()==null)
@@ -147,7 +145,7 @@ public class Dijkstra<K,V> {
 				}
 				if(temp.equals(nodo.fin()))
 				{
-					lista.agregarElementoPrincipio(nodo);
+					lista.agregarElementoPrincipio(temp);
 					temp=nodo.intermedio();
 					break;
 				}
@@ -159,39 +157,6 @@ public class Dijkstra<K,V> {
 		}
 		return lista;
 		
-	}
-	
-	public static void main(String[] args) {
-		WeightedEdgeDirectedGraph<Integer,Double> G= new WeightedEdgeDirectedGraph<Integer,Double>();
-		G.agregarVertice(0, 0.0);
-		G.agregarVertice(1, 0.0);
-		G.agregarVertice(2, 0.0);
-		G.agregarVertice(3, 0.0);
-		G.agregarVertice(4, 0.0);
-		G.agregarVertice(5, 0.0);
-		G.agregarVertice(6, 0.0);
-		
-		G.agregarArco(0, 0, 0.5);
-		G.agregarArco(0, 1, 1.0);
-		G.agregarArco(1, 2, 2.0);
-		G.agregarArco(2, 3, 3.0);
-		G.agregarArco(3, 4, 1.0);
-		G.agregarArco(4, 5, 1.0);
-		G.agregarArco(5, 6, 15.0);
-		G.agregarArco(3, 6, 4.0);
-		G.agregarArco(0, 6, 3.5);
-		
-		Dijkstra<Integer,Double> D=new Dijkstra<Integer,Double>(G,0);
-		for(int i=0;i<D.camino.size();i++)
-		{
-			System.out.println(D.camino.get(i).intermedio()+" "+D.camino.get(i).fin());
-		}
-		Iterable<NodoCamino<Integer>> iter=D.pathTo(0);
-		System.out.println("\n HOLA");
-		for(NodoCamino<Integer> n:iter)
-		{
-			System.out.println(n.intermedio()+" "+n.fin()+" "+n.length()+" "+n.weight());
-		}
 	}
 
 }
